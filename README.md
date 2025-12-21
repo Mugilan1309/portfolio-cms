@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Portfolio & CMS Platform
 
-## Getting Started
+A custom-engineered full-stack platform designed to showcase AI & Data Science projects. 
 
-First, run the development server:
+Unlike static portfolio templates, this system features a fully dynamic Content Management System (CMS) built from scratch, allowing for real-time updates of case studies, certificates, and professional details without code deployment.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🏗️ System Architecture
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application is built on a modern serverless architecture, prioritizing performance, security, and type safety.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend:** Next.js 14/15 (App Router) for server-side rendering and SEO optimization.
+- **Language:** TypeScript for robust, error-free code execution.
+- **Styling:** Tailwind CSS + Shadcn UI for a responsive, accessible interface.
+- **Backend & Database:** Supabase (PostgreSQL) handling relational data and storage.
+- **Security:** Row Level Security (RLS) policies ensuring only the authenticated admin can modify data.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔥 Key Features
 
-## Learn More
+### 1. Dynamic Project Showcase
+- **Markdown Support:** Project descriptions utilize a Markdown engine, allowing for rich-text case studies, code blocks, and embedded media.
+- **Tagging System:** Projects are categorized dynamically by tech stack (e.g., Python, TensorFlow, React).
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Custom Admin Dashboard
+A secure, private interface built for content management:
+- **Authentication:** Secure login gateway using Supabase Auth.
+- **CRUD Operations:** Full capability to Create, Read, Update, and Delete projects and certificates.
+- **Media Helper:** A custom-built tool that converts local screenshots into public URLs for seamless embedding into project descriptions.
+- **Profile Management:** Dynamic editing of bio, headlines, and resume links.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Certificate Verification
+- A dedicated section for verifying academic and professional achievements.
+- Includes a custom "Full Screen" modal viewer for inspecting certificate credentials in high detail.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 💾 Database Schema
 
-## Deploy on Vercel
+The system utilizes a relational PostgreSQL schema:
+- **`projects`**: Stores case studies, repository links, and demo videos.
+- **`certificates`**: Tracks certifications, issuers, and verification links.
+- **`profile`**: Centralized storage for bio, avatar, and resume data.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+*Built by Mugilan Y as a dedicated platform for AI & Engineering Project Showcasing.*
