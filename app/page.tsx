@@ -133,7 +133,7 @@ export default async function Home() {
                 <FolderKanban className="w-6 h-6 text-blue-600 dark:text-blue-400" />
              </div>
              <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-               Selected Projects
+               Projects
              </h2>
           </div>
           <span className="hidden md:block text-muted-foreground font-mono text-sm bg-muted px-2 py-1 rounded">
