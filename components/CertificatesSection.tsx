@@ -1,10 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ExternalLink, Award, X, Maximize2 } from 'lucide-react'
 
-// Define the type for the data we passed down
 interface Certificate {
   id: string
   title: string
@@ -17,7 +16,6 @@ interface Certificate {
 export default function CertificatesSection({ certificates }: { certificates: Certificate[] }) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
-  // Handle "Esc" Key to close
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setSelectedImage(null)
@@ -29,45 +27,59 @@ export default function CertificatesSection({ certificates }: { certificates: Ce
   if (!certificates || certificates.length === 0) return null
 
   return (
-    <section>
-      <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
-        <Award className="w-8 h-8 text-blue-600" /> Certificates & Achievements
-      </h2>
+    <section className="border-t border-border/40 pt-20">
+      <div className="flex items-center gap-3 mb-10">
+        <div className="p-2 bg-blue-500/10 rounded-lg">
+          <Award className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+        </div>
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+          Certifications & Achievements
+        </h2>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {certificates.map((cert) => (
-          <Card key={cert.id} className="hover:border-blue-300 transition-colors">
-            <CardHeader className="pb-2">
-              {cert.image_url && (
+          <Card key={cert.id} className="group border border-border/50 bg-card/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+            <CardHeader className="p-0">
+              {cert.image_url ? (
                 <div 
-                  className="group mb-4 h-32 bg-slate-100 rounded-md overflow-hidden flex items-center justify-center relative cursor-pointer"
+                  className="h-40 bg-muted relative cursor-pointer overflow-hidden border-b border-border/50"
                   onClick={() => setSelectedImage(cert.image_url)}
                 >
                   <img 
                     src={cert.image_url} 
                     alt={cert.title} 
-                    className="h-full object-contain transition-transform duration-300 group-hover:scale-105" 
+                    className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105" 
                   />
-                  {/* Hover Hint */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                    <Maximize2 className="text-slate-700 w-6 h-6" />
+                  <div className="absolute inset-0 bg-background/0 group-hover:bg-background/10 transition-colors flex items-center justify-center">
+                    <Maximize2 className="text-foreground opacity-0 group-hover:opacity-100 transition-opacity transform scale-75 group-hover:scale-100 duration-200" />
                   </div>
                 </div>
+              ) : (
+                <div className="h-40 bg-muted border-b border-border/50 flex items-center justify-center text-muted-foreground">
+                   <Award className="w-10 h-10 opacity-20" />
+                </div>
               )}
-              <CardTitle className="text-lg">{cert.title}</CardTitle>
-              <CardDescription className="flex items-center gap-1 mt-1">
-                {cert.issuer} 
-                {cert.date_issued && (
-                  <span className="text-xs text-slate-400 flex items-center ml-2">
-                     • {cert.date_issued}
-                  </span>
-                )}
-              </CardDescription>
+              
+              <div className="p-5">
+                <CardTitle className="text-base font-bold text-foreground leading-tight mb-2 line-clamp-2" title={cert.title}>
+                  {cert.title}
+                </CardTitle>
+                <CardDescription className="flex flex-col gap-1 text-xs text-muted-foreground">
+                  <span className="font-medium text-foreground/80">{cert.issuer}</span>
+                  <span>{cert.date_issued}</span>
+                </CardDescription>
+              </div>
             </CardHeader>
-            <CardFooter>
+
+            <CardFooter className="px-5 pb-5 pt-0">
               {cert.credential_link && (
-                <a href={cert.credential_link} target="_blank" className="text-sm font-medium text-blue-600 hover:underline flex items-center">
-                  View Credential <ExternalLink className="w-3 h-3 ml-1" />
+                <a 
+                  href={cert.credential_link} 
+                  target="_blank" 
+                  className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1 uppercase tracking-wide transition-colors"
+                >
+                  Verify Credential <ExternalLink className="w-3 h-3" />
                 </a>
               )}
             </CardFooter>
@@ -75,26 +87,24 @@ export default function CertificatesSection({ certificates }: { certificates: Ce
         ))}
       </div>
 
-      {/* --- FULL SCREEN MODAL --- */}
+      {/* --- MODAL --- */}
       {selectedImage && (
         <div 
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
-          onClick={() => setSelectedImage(null)} // Click outside to close
+          className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 md:p-10 animate-in fade-in duration-200"
+          onClick={() => setSelectedImage(null)}
         >
-          {/* Close Button */}
           <button 
-            className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors"
+            className="absolute top-4 right-4 md:top-8 md:right-8 text-foreground/50 hover:text-foreground transition-colors p-2 hover:bg-background/10 rounded-full"
             onClick={() => setSelectedImage(null)}
           >
             <X className="w-8 h-8" />
           </button>
 
-          {/* Image */}
           <img 
             src={selectedImage} 
-            alt="Full Screen" 
-            className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl scale-100 animate-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()} // Clicking image shouldn't close it
+            alt="Certificate View" 
+            className="w-auto h-auto max-w-full max-h-full object-contain rounded shadow-2xl animate-in zoom-in-95 duration-300"
+            onClick={(e) => e.stopPropagation()} 
           />
         </div>
       )}

@@ -1,105 +1,103 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
-import ReactMarkdown from 'react-markdown'
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Github, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Github, ExternalLink, Calendar } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
+import { ModeToggle } from '@/components/mode-toggle'
 
-// Define what the params look like (It's a Promise now in Next.js 15)
-type PageProps = {
+// This ensures we can get the ID properly in Next.js 15
+export const revalidate = 0 
+
+// Updated Interface for Next.js 15 Params
+interface PageProps {
   params: Promise<{ id: string }>
 }
 
-export default async function ProjectPage(props: PageProps) {
-  // 1. AWAIT the params to get the ID
-  const { id } = await props.params
-  
-  // 2. Fetch the specific project
-  const { data: project, error } = await supabase
-    .from('projects')
-    .select('*')
-    .eq('id', id)
-    .single()
+export default async function ProjectPage({ params }: PageProps) {
+  // Await the params object (New requirement in Next.js 15)
+  const resolvedParams = await params
+  const { id } = resolvedParams
 
-  // Debugging: If it fails, check your VS Code terminal to see why
-  if (error) {
-    console.error("Supabase Error:", error)
-  }
+  const { data: project } = await supabase.from('projects').select('*').eq('id', id).single()
 
-  if (!project) {
-    return (
-      <div className="text-center py-20">
-        <h1 className="text-2xl font-bold">Project not found</h1>
-        <p className="text-slate-500">ID searched: {id}</p>
-        <Link href="/" className="text-blue-500 underline">Go Home</Link>
-      </div>
-    )
-  }
+  if (!project) return <div className="p-20 text-center text-muted-foreground">Project not found</div>
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen bg-background relative overflow-x-hidden selection:bg-blue-500/20">
       
-      {/* Top Navigation */}
-      <nav className="border-b sticky top-0 bg-white/80 backdrop-blur-md z-10">
-        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center">
-          <Link href="/">
-            <Button variant="ghost" className="pl-0 hover:pl-2 transition-all">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Projects
-            </Button>
-          </Link>
-        </div>
-      </nav>
+      {/* Background Grid */}
+      <div className="fixed inset-0 z-0 h-full w-full bg-background bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
 
-      <main className="max-w-4xl mx-auto px-6 py-12">
+      {/* Navigation Header */}
+      <div className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-6 bg-background/50 backdrop-blur-md border-b border-border/40">
+        <Link href="/">
+           <Button variant="ghost" className="hover:bg-background/80 gap-2">
+             <ArrowLeft className="w-4 h-4" /> Back to Projects
+           </Button>
+        </Link>
+        <ModeToggle />
+      </div>
+
+      <main className="relative z-10 max-w-4xl mx-auto pt-28 px-6 pb-20">
         
-        {/* Header Section */}
-        <div className="mb-10">
-          <div className="flex flex-wrap gap-2 mb-4">
-            {project.tags?.map((tag: string) => (
-              <Badge key={tag} variant="secondary">{tag}</Badge>
-            ))}
-          </div>
-          
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 text-slate-900">
-            {project.title}
-          </h1>
-          
-          <p className="text-xl text-slate-600 leading-relaxed mb-8 border-l-4 border-blue-500 pl-4">
-            {project.summary}
-          </p>
+        {/* --- HEADER --- */}
+        <div className="space-y-6 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+           
+           {/* Date & Title */}
+           <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono">
+                 <Calendar className="w-4 h-4" />
+                 <span>{new Date(project.created_at).toLocaleDateString()}</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
+                {project.title}
+              </h1>
+           </div>
 
-          <div className="flex flex-wrap gap-4">
-            {project.repo_link && (
-              <a href={project.repo_link} target="_blank">
-                <Button variant="outline">
-                  <Github className="mr-2 h-4 w-4" /> View Source
-                </Button>
-              </a>
-            )}
-            {project.demo_link && (
-              <a href={project.demo_link} target="_blank">
-                <Button>
-                  <ExternalLink className="mr-2 h-4 w-4" /> Live Demo
-                </Button>
-              </a>
-            )}
-          </div>
+           {/* Tags */}
+           <div className="flex flex-wrap gap-2">
+              {project.tags?.map((tag: string) => (
+                <Badge key={tag} variant="secondary" className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/10 px-3 py-1">
+                  {tag}
+                </Badge>
+              ))}
+           </div>
+
+           {/* Buttons */}
+           <div className="flex flex-wrap gap-3 pt-2">
+              {project.demo_link && (
+                 <a href={project.demo_link} target="_blank">
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20">
+                      <ExternalLink className="mr-2 w-4 h-4" /> Live Demo
+                    </Button>
+                 </a>
+              )}
+              {project.repo_link && (
+                 <a href={project.repo_link} target="_blank">
+                    <Button variant="outline" className="border-border hover:bg-accent hover:text-accent-foreground">
+                      <Github className="mr-2 w-4 h-4" /> View Code
+                    </Button>
+                 </a>
+              )}
+           </div>
         </div>
 
-        {/* Hero Image */}
+        {/* --- HERO IMAGE --- */}
         {project.image_url && (
-          <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm mb-12">
-            <img 
-              src={project.image_url} 
-              alt={project.title} 
-              className="w-full h-auto"
-            />
-          </div>
+           <div className="rounded-xl overflow-hidden border border-border/50 shadow-2xl mb-12 bg-muted animate-in fade-in zoom-in-95 duration-700 delay-100">
+              <img src={project.image_url} alt={project.title} className="w-full h-auto object-cover" />
+           </div>
         )}
 
-        {/* Markdown Content - With Tailwind Typography */}
-        <article className="prose prose-slate lg:prose-lg max-w-none">
-          <ReactMarkdown>{project.content || ''}</ReactMarkdown>
+        {/* --- MARKDOWN CONTENT --- */}
+        <article className="prose prose-slate dark:prose-invert prose-lg max-w-none 
+          prose-headings:font-bold prose-headings:tracking-tight 
+          prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
+          prose-img:rounded-xl prose-img:shadow-lg prose-img:border prose-img:border-border/50
+          prose-code:text-blue-600 dark:prose-code:text-blue-400 prose-code:bg-blue-500/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+        ">
+          <ReactMarkdown>{project.content || "_No content added yet._"}</ReactMarkdown>
         </article>
 
       </main>
