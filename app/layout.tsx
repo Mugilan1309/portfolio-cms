@@ -11,8 +11,8 @@ const jakarta = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "AI Engineering Portfolio",
-  description: "Showcase of AI & Data Science Projects",
+  title: "Mugilan Y",
+  description: "Showcase of my projects, and more!",
 }
 
 export default function RootLayout({
