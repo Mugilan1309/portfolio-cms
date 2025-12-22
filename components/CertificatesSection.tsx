@@ -27,20 +27,24 @@ export default function CertificatesSection({ certificates }: { certificates: Ce
   if (!certificates || certificates.length === 0) return null
 
   return (
-    <section className="border-t border-border/40 pt-20">
-      <div className="flex items-center gap-3 mb-10">
-        <div className="p-2 bg-blue-500/10 rounded-lg">
-          <Award className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+    <section className="pt-10">
+      
+      {/* --- STANDARDIZED HEADER (Matches Skills & Projects) --- */}
+      <div className="flex items-end justify-between mb-12 border-b border-border/40 pb-4">
+        <div className="flex items-center gap-3">
+           <div className="p-2 bg-blue-500/10 rounded-lg">
+              <Award className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+           </div>
+           <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+             Certifications and Achievements
+           </h2>
         </div>
-        <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-          Certifications & Achievements
-        </h2>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {certificates.map((cert) => (
-          <Card key={cert.id} className="group border border-border/50 bg-card/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-            <CardHeader className="p-0">
+          <Card key={cert.id} className="group border border-border/50 bg-card/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col h-full">
+            <CardHeader className="p-0 shrink-0">
               {cert.image_url ? (
                 <div 
                   className="h-40 bg-muted relative cursor-pointer overflow-hidden border-b border-border/50"
@@ -62,7 +66,8 @@ export default function CertificatesSection({ certificates }: { certificates: Ce
               )}
               
               <div className="p-5">
-                <CardTitle className="text-base font-bold text-foreground leading-tight mb-2 line-clamp-2" title={cert.title}>
+                {/* Fixed Height Title */}
+                <CardTitle className="text-base font-bold text-foreground leading-tight mb-2 line-clamp-2 h-[3rem] flex items-center" title={cert.title}>
                   {cert.title}
                 </CardTitle>
                 <CardDescription className="flex flex-col gap-1 text-xs text-muted-foreground">
@@ -71,8 +76,10 @@ export default function CertificatesSection({ certificates }: { certificates: Ce
                 </CardDescription>
               </div>
             </CardHeader>
+            
+            <div className="flex-grow"></div>
 
-            <CardFooter className="px-5 pb-5 pt-0">
+            <CardFooter className="px-5 pb-5 pt-0 justify-end">
               {cert.credential_link && (
                 <a 
                   href={cert.credential_link} 
@@ -87,7 +94,7 @@ export default function CertificatesSection({ certificates }: { certificates: Ce
         ))}
       </div>
 
-      {/* --- MODAL --- */}
+      {/* Image Modal */}
       {selectedImage && (
         <div 
           className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 md:p-10 animate-in fade-in duration-200"

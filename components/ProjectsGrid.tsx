@@ -4,13 +4,12 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, X, Maximize2, ExternalLink, Github } from 'lucide-react'
+import { ArrowRight, X, Maximize2, ExternalLink } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 
 export default function ProjectsGrid({ projects }: { projects: any[] }) {
   const [selectedProject, setSelectedProject] = useState<any | null>(null)
 
-  // Close modal on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setSelectedProject(null)
@@ -26,29 +25,23 @@ export default function ProjectsGrid({ projects }: { projects: any[] }) {
           <Card 
             key={project.id} 
             className="group border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden flex flex-col h-full transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] hover:border-blue-500/30 cursor-pointer"
-            onClick={() => setSelectedProject(project)} // Click card to open modal
+            onClick={() => setSelectedProject(project)}
           >
-            {/* --- IMAGE OR GENERATED TITLE GRAPHIC --- */}
+            {/* Image Area */}
             {project.image_url ? (
-              <div className="h-56 overflow-hidden bg-muted relative">
+              <div className="h-56 overflow-hidden bg-muted relative shrink-0">
                  <div className="absolute inset-0 bg-blue-900/0 group-hover:bg-blue-900/10 transition-colors z-10 flex items-center justify-center">
                     <Maximize2 className="text-white opacity-0 group-hover:opacity-100 transition-opacity transform scale-75 group-hover:scale-100 duration-300 drop-shadow-md" />
                  </div>
                  <img src={project.image_url} alt={project.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out" />
               </div>
             ) : (
-              // THE "TITLE AS GRAPHIC" GENERATOR
-              <div className="h-56 bg-gradient-to-br from-blue-600 to-indigo-700 relative overflow-hidden flex items-center justify-center p-6 text-center group-hover:brightness-110 transition-all">
-                {/* Decorative background circles */}
+              <div className="h-56 bg-gradient-to-br from-blue-600 to-indigo-700 relative overflow-hidden flex items-center justify-center p-6 text-center group-hover:brightness-110 transition-all shrink-0">
                 <div className="absolute top-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2"></div>
                 <div className="absolute bottom-0 right-0 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
-                
-                {/* The Title Text */}
-                <h3 className="relative z-10 text-white font-bold text-2xl tracking-tight leading-tight drop-shadow-lg">
+                <h3 className="relative z-10 text-white font-bold text-2xl tracking-tight leading-tight drop-shadow-lg line-clamp-3">
                   {project.title}
                 </h3>
-                
-                {/* Hover Icon */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors z-20 flex items-center justify-center">
                    <Maximize2 className="text-white opacity-0 group-hover:opacity-100 transition-opacity transform scale-75 group-hover:scale-100 duration-300" />
                 </div>
@@ -63,7 +56,8 @@ export default function ProjectsGrid({ projects }: { projects: any[] }) {
                   </Badge>
                 ))}
               </div>
-              <CardTitle className="text-2xl font-bold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              {/* FIXED HEIGHT TITLE FOR ALIGNMENT */}
+              <CardTitle className="text-2xl font-bold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 h-[4rem] flex items-center">
                   {project.title}
               </CardTitle>
             </CardHeader>
@@ -84,17 +78,16 @@ export default function ProjectsGrid({ projects }: { projects: any[] }) {
         ))}
       </div>
 
-      {/* --- QUICK VIEW EXPANSION MODAL --- */}
+      {/* Modal remains the same... */}
       {selectedProject && (
         <div 
           className="fixed inset-0 z-[100] bg-background/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
-          onClick={() => setSelectedProject(null)} // Click outside to close
+          onClick={() => setSelectedProject(null)}
         >
           <div 
             className="relative w-full max-w-2xl bg-card border border-border/50 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 slide-in-from-bottom-4 duration-300"
-            onClick={(e) => e.stopPropagation()} // Click inside doesn't close
+            onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
             <button 
               className="absolute top-4 right-4 z-20 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors backdrop-blur-sm"
               onClick={() => setSelectedProject(null)}
@@ -102,7 +95,6 @@ export default function ProjectsGrid({ projects }: { projects: any[] }) {
               <X className="w-5 h-5" />
             </button>
 
-            {/* Modal Image Header */}
             {selectedProject.image_url ? (
                <div className="h-48 sm:h-64 w-full relative shrink-0">
                   <img src={selectedProject.image_url} className="w-full h-full object-cover" alt="Cover" />
@@ -114,7 +106,6 @@ export default function ProjectsGrid({ projects }: { projects: any[] }) {
                </div>
             )}
 
-            {/* Modal Content Scrollable Area */}
             <div className="p-6 sm:p-8 overflow-y-auto">
                <div className="space-y-4">
                  <div>
@@ -127,11 +118,9 @@ export default function ProjectsGrid({ projects }: { projects: any[] }) {
                  </div>
 
                  <div className="prose prose-sm dark:prose-invert text-muted-foreground leading-relaxed">
-                    {/* Display Full Summary Here */}
                     <p>{selectedProject.summary}</p>
                  </div>
 
-                 {/* Action Buttons in Modal */}
                  <div className="flex flex-wrap gap-3 pt-6 border-t border-border/50 mt-6">
                     <Link href={`/project/${selectedProject.id}`} className="flex-1 sm:flex-none">
                       <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white gap-2">
