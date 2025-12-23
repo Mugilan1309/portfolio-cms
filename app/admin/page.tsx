@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Pencil, Trash2, LogOut, ExternalLink, Copy, Image as ImageIcon, LayoutDashboard, Plus, Save, Eye, XCircle, Code2 } from 'lucide-react'
+import { Pencil, Trash2, LogOut, ExternalLink, Copy, Image as ImageIcon, LayoutDashboard, Plus, Save, Eye, XCircle } from 'lucide-react'
 import { ModeToggle } from '@/components/mode-toggle'
 
 export default function AdminPage() {
@@ -20,12 +20,12 @@ export default function AdminPage() {
   // Data Lists
   const [projects, setProjects] = useState<any[]>([])
   const [certificates, setCertificates] = useState<any[]>([])
-  const [skills, setSkills] = useState<any[]>([]) // NEW SKILLS STATE
+  const [skills, setSkills] = useState<any[]>([]) 
 
   // Edit Mode States
   const [editingProjId, setEditingProjId] = useState<string | null>(null)
   const [editingCertId, setEditingCertId] = useState<string | null>(null)
-  const [editingSkillId, setEditingSkillId] = useState<string | null>(null) // NEW
+  const [editingSkillId, setEditingSkillId] = useState<string | null>(null) 
 
   // --- PROJECT FORM STATES ---
   const [projTitle, setProjTitle] = useState('')
@@ -45,7 +45,7 @@ export default function AdminPage() {
   const [certImage, setCertImage] = useState<File | null>(null)
   const [currentCertImageUrl, setCurrentCertImageUrl] = useState<string | null>(null)
 
-  // --- SKILL FORM STATES (NEW) ---
+  // --- SKILL FORM STATES ---
   const [skillCategory, setSkillCategory] = useState('')
   const [skillItems, setSkillItems] = useState('')
 
@@ -70,12 +70,15 @@ export default function AdminPage() {
 
   // 1. FETCH ALL DATA ON LOAD
   const fetchData = async () => {
+    // FIX: Add robust error handling for "Invalid Refresh Token"
     const { data: { session }, error } = await supabase.auth.getSession()
+    
+    // If no session OR token error, redirect to login
     if (error || !session) {
-        console.log("Session invalid, redirecting...")
-        await supabase.auth.signOut()
-        router.push('/login')
-        return
+      console.log("Session expired or invalid:", error?.message)
+      await supabase.auth.signOut() 
+      router.push('/login')
+      return
     }
 
     const { data: pData } = await supabase.from('projects').select('*').order('created_at', { ascending: false })
@@ -84,7 +87,6 @@ export default function AdminPage() {
     const { data: cData } = await supabase.from('certificates').select('*').order('created_at', { ascending: false })
     if (cData) setCertificates(cData)
 
-    // FETCH SKILLS
     const { data: sData } = await supabase.from('skills').select('*').order('created_at', { ascending: true })
     if (sData) setSkills(sData)
 
@@ -182,7 +184,7 @@ export default function AdminPage() {
     setLoading(false)
   }
 
-  // --- SKILL LOGIC (NEW) ---
+  // --- SKILL LOGIC ---
   const handleEditSkill = (skill: any) => { setEditingSkillId(skill.id); setSkillCategory(skill.category); setSkillItems(skill.items); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const handleDeleteSkill = async (id: string) => { if (!confirm('Delete?')) return; await supabase.from('skills').delete().eq('id', id); fetchData() }
   const handleSkillSubmit = async (e: React.FormEvent) => {
@@ -242,8 +244,8 @@ export default function AdminPage() {
             <Tabs defaultValue="projects" className="w-full">
               <TabsList className="grid w-full grid-cols-4 mb-8 bg-muted/50 p-1 rounded-xl">
                 <TabsTrigger value="projects" className="rounded-lg">Projects</TabsTrigger>
-                <TabsTrigger value="skills" className="rounded-lg">Skills</TabsTrigger> {/* NEW TAB */}
-                <TabsTrigger value="certificates" className="rounded-lg">Certificate</TabsTrigger>
+                <TabsTrigger value="skills" className="rounded-lg">Skills</TabsTrigger> 
+                <TabsTrigger value="certificates" className="rounded-lg">Certificates</TabsTrigger>
                 <TabsTrigger value="profile" className="rounded-lg">Profile</TabsTrigger>
               </TabsList>
 
@@ -262,7 +264,19 @@ export default function AdminPage() {
                       </div>
                       <div className="space-y-2"><Label>Full Content (Markdown)</Label><Textarea className="h-64 font-mono text-sm bg-background/50 border-border" value={projContent} onChange={e=>setProjContent(e.target.value)} placeholder="# My Awesome Project..." /></div>
                       <div className="space-y-2"><Label>Cover Image</Label><Input type="file" onChange={e=>setProjImage(e.target.files?.[0] || null)} className="bg-background/50 border-border cursor-pointer file:text-primary" />{currentProjImageUrl && (<div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 dark:bg-green-900/20 p-2 rounded border border-green-200 dark:border-green-900"><Eye className="w-4 h-4" /> <span>Current image saved</span><button type="button" onClick={() => removeField('projects', editingProjId!, 'image_url')} className="ml-auto text-red-500 text-xs hover:underline">Remove</button></div>)}</div>
-                      <div className="flex gap-2 pt-4"><Button disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white">{editingProjId ? 'Update Project' : 'Publish Project'}</Button>{editingProjId && <Button type="button" variant="outline" onClick={cancelEdit}>Cancel</Button>}</div>
+                      
+                      {/* FIX: Buttons split 50/50 */}
+                      <div className="flex gap-2 pt-4">
+                        <Button disabled={loading} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
+                          {editingProjId ? 'Update Project' : 'Publish Project'}
+                        </Button>
+                        {editingProjId && (
+                          <Button type="button" variant="outline" onClick={cancelEdit} className="flex-1">
+                            Cancel
+                          </Button>
+                        )}
+                      </div>
+                    
                     </form>
                   </CardContent>
                 </Card>
@@ -272,7 +286,7 @@ export default function AdminPage() {
                 </Card>
               </TabsContent>
 
-              {/* === SKILLS TAB (NEW) === */}
+              {/* === SKILLS TAB === */}
               <TabsContent value="skills" className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
                 <Card className={`border border-border/50 bg-card/80 backdrop-blur-md shadow-xl ${editingSkillId ? "ring-2 ring-blue-500/50" : ""}`}>
                    <CardHeader><CardTitle className="flex items-center gap-2">{editingSkillId ? <Pencil className="w-5 h-5" /> : <Plus className="w-5 h-5" />} {editingSkillId ? "Edit Skill Group" : "Add Skill Group"}</CardTitle></CardHeader>
@@ -280,7 +294,18 @@ export default function AdminPage() {
                       <form onSubmit={handleSkillSubmit} className="space-y-4">
                          <div className="space-y-2"><Label>Category Name (e.g. AI / Data Science)</Label><Input value={skillCategory} onChange={e=>setSkillCategory(e.target.value)} required className="bg-background/50 border-border" /></div>
                          <div className="space-y-2"><Label>Skills List (Comma Separated)</Label><Textarea value={skillItems} onChange={e=>setSkillItems(e.target.value)} placeholder="Python, TensorFlow, PyTorch..." required className="bg-background/50 border-border h-24" /></div>
-                         <div className="flex gap-2 pt-4"><Button disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white">{editingSkillId ? "Update Skills" : "Add Skills"}</Button>{editingSkillId && <Button type="button" variant="outline" onClick={cancelEdit}>Cancel</Button>}</div>
+                         
+                         {/* FIX: Buttons split 50/50 */}
+                         <div className="flex gap-2 pt-4">
+                            <Button disabled={loading} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
+                                {editingSkillId ? "Update Skills" : "Add Skills"}
+                            </Button>
+                            {editingSkillId && (
+                                <Button type="button" variant="outline" onClick={cancelEdit} className="flex-1">
+                                    Cancel
+                                </Button>
+                            )}
+                         </div>
                       </form>
                    </CardContent>
                 </Card>
@@ -300,7 +325,19 @@ export default function AdminPage() {
                       <div className="grid grid-cols-2 gap-4"><div className="space-y-2"><Label>Issuer</Label><Input value={certIssuer} onChange={e=>setCertIssuer(e.target.value)} className="bg-background/50 border-border" /></div><div className="space-y-2"><Label>Date</Label><Input type="date" value={certDate} onChange={e=>setCertDate(e.target.value)} className="bg-background/50 border-border" /></div></div>
                       <div className="space-y-2"><Label>Credential Link</Label><Input value={certLink} onChange={e=>setCertLink(e.target.value)} className="bg-background/50 border-border" /></div>
                       <div className="space-y-2"><Label>Image</Label><Input type="file" onChange={e=>setCertImage(e.target.files?.[0] || null)} className="bg-background/50 border-border cursor-pointer file:text-primary" />{currentCertImageUrl && (<div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 dark:bg-green-900/20 p-2 rounded border border-green-200 dark:border-green-900"><Eye className="w-4 h-4" /> <span>Current image saved</span><button type="button" onClick={() => removeField('certificates', editingCertId!, 'image_url')} className="ml-auto text-red-500 text-xs hover:underline">Remove</button></div>)}</div>
-                      <div className="flex gap-2 pt-4"><Button disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white">{editingCertId ? "Update" : "Add"}</Button>{editingCertId && <Button type="button" variant="outline" onClick={cancelEdit}>Cancel</Button>}</div>
+                      
+                      {/* FIX: Buttons split 50/50 */}
+                      <div className="flex gap-2 pt-4">
+                        <Button disabled={loading} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
+                            {editingCertId ? "Update" : "Add"}
+                        </Button>
+                        {editingCertId && (
+                            <Button type="button" variant="outline" onClick={cancelEdit} className="flex-1">
+                                Cancel
+                            </Button>
+                        )}
+                      </div>
+
                     </form>
                   </CardContent>
                 </Card>
