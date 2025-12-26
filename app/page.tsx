@@ -20,9 +20,15 @@ export default async function Home() {
   
   const [profileData, projectsData, certsData, skillsData] = await Promise.all([
     supabase.from('profile').select('*').single(),
-    supabase.from('projects').select('*').order('created_at', { ascending: false }),
-    supabase.from('certificates').select('*').order('date_issued', { ascending: false }),
-    supabase.from('skills').select('*').order('created_at', { ascending: true }) 
+    
+    // UPDATED: Sort by 'order_index' so drag-and-drop works
+    supabase.from('projects').select('*').order('order_index', { ascending: true }),
+    
+    // UPDATED: Sort by 'order_index'
+    supabase.from('certificates').select('*').order('order_index', { ascending: true }),
+    
+    // UPDATED: Sort by 'order_index'
+    supabase.from('skills').select('*').order('order_index', { ascending: true }) 
   ])
 
   const profile = profileData.data
@@ -142,7 +148,7 @@ export default async function Home() {
         </div>
       </header>
 
-      {/* --- SKILLS SECTION (ADDED 'relative z-10' HERE) --- */}
+      {/* --- SKILLS SECTION --- */}
       <div className="relative z-10 max-w-6xl mx-auto px-6 mb-12">
         <SkillsSection skills={skills} />
       </div>
