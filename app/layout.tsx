@@ -11,7 +11,7 @@ const jakarta = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "Mugilan Y",
+  title: "Mugilan Y | AI, ML, and DL Projects",
   description: "Showcase of my projects, and more!",
 }
 

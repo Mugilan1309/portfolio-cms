@@ -249,7 +249,7 @@ export default function AdminPage() {
           <div className="lg:col-span-2">
             <Tabs defaultValue="projects" className="w-full">
               <TabsList className="grid w-full grid-cols-4 mb-8 bg-muted/50 p-1 rounded-xl">
-                <TabsTrigger value="projects">Projects</TabsTrigger><TabsTrigger value="skills">Skills</TabsTrigger><TabsTrigger value="certificates">Certs</TabsTrigger><TabsTrigger value="profile">Profile</TabsTrigger>
+                <TabsTrigger value="projects">Projects</TabsTrigger><TabsTrigger value="skills">Skills</TabsTrigger><TabsTrigger value="certificates">Certifications</TabsTrigger><TabsTrigger value="profile">Profile</TabsTrigger>
               </TabsList>
 
               {/* PROJECTS */}
